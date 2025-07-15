@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
 import { User, AuthContextType } from "@/types/auth";
+import { getItem, setItem, removeItem } from "@/utils/storage";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -14,10 +15,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const encryptedUser = localStorage.getItem("auth_user");
+    const encryptedUser = getItem<string>("auth_user");
     if (encryptedUser) {
       try {
-        const parsed = JSON.parse(encryptedUser);
+        const parsed = typeof encryptedUser === "string" ? JSON.parse(encryptedUser) : encryptedUser;
         const bytes = CryptoJS.AES.decrypt(parsed.password, SECRET_KEY);
         const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
         setUser({ email: parsed.email, password: decryptedPassword });
@@ -31,11 +32,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isEncrypted = (str: string) => str.startsWith("U2Fsd");
 
   const signup = (newUser: User) => {
-    const encryptedUsers = localStorage.getItem("users");
+    const encryptedUsers = getItem<string>("users");
     let users: User[] = [];
     if (encryptedUsers) {
       try {
-        users = JSON.parse(encryptedUsers).map((u: User) => ({
+        const parsedUsers = typeof encryptedUsers === "string" ? JSON.parse(encryptedUsers) : encryptedUsers;
+        users = parsedUsers.map((u: User) => ({
           email: u.email,
           password: isEncrypted(u.password)
             ? CryptoJS.AES.decrypt(u.password, SECRET_KEY).toString(CryptoJS.enc.Utf8)
@@ -46,30 +48,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
     if (users.find((u: User) => u.email === newUser.email)) return false;
-    // Add new user (password in plain text for now)
     const updatedUsers = [...users, newUser];
-    // Encrypt all passwords before saving
     const usersToSave = updatedUsers.map(u => ({
       email: u.email,
       password: CryptoJS.AES.encrypt(u.password, SECRET_KEY).toString(),
     }));
-    localStorage.setItem("users", JSON.stringify(usersToSave));
-    localStorage.setItem("auth_user", JSON.stringify({
+    setItem("users", usersToSave);
+    setItem("auth_user", {
       email: newUser.email,
       password: CryptoJS.AES.encrypt(newUser.password, SECRET_KEY).toString(),
-    }));
+    });
     setUser(newUser);
     return true;
   };
 
   const login = (loginUser: User) => {
-    const encryptedUsers = localStorage.getItem("users");
+    const encryptedUsers = getItem<string>("users");
     let users: User[] = [];
     if (encryptedUsers) {
       try {
-        users = JSON.parse(encryptedUsers).map((u: User) => ({
+        const parsedUsers = typeof encryptedUsers === "string" ? JSON.parse(encryptedUsers) : encryptedUsers;
+        users = parsedUsers.map((u: User) => ({
           email: u.email,
-          password: CryptoJS.AES.decrypt(u.password, SECRET_KEY).toString(CryptoJS.enc.Utf8),
+          password: isEncrypted(u.password)
+            ? CryptoJS.AES.decrypt(u.password, SECRET_KEY).toString(CryptoJS.enc.Utf8)
+            : u.password,
         }));
       } catch (e) {
         users = [];
@@ -79,10 +82,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (u: User) => u.email === loginUser.email && u.password === loginUser.password
     );
     if (found) {
-      // Encrypt only the password for storage
-      const encryptedPassword = CryptoJS.AES.encrypt(found.password, SECRET_KEY).toString();
-      const userToSave = { email: found.email, password: encryptedPassword };
-      localStorage.setItem("auth_user", JSON.stringify(userToSave));
+      setItem("auth_user", {
+        email: found.email,
+        password: CryptoJS.AES.encrypt(found.password, SECRET_KEY).toString(),
+      });
       setUser(found);
       return true;
     }
@@ -90,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("auth_user");
+    removeItem("auth_user");
     setUser(null);
   };
 

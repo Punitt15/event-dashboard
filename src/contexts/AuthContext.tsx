@@ -17,9 +17,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const encryptedUser = localStorage.getItem("auth_user");
     if (encryptedUser) {
       try {
-        const bytes = CryptoJS.AES.decrypt(encryptedUser, SECRET_KEY);
-        const decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-        setUser(decrypted);
+        const parsed = JSON.parse(encryptedUser);
+        const bytes = CryptoJS.AES.decrypt(parsed.password, SECRET_KEY);
+        const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+        setUser({ email: parsed.email, password: decryptedPassword });
       } catch (e) {
         setUser(null);
       }
@@ -32,18 +33,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let users: User[] = [];
     if (encryptedUsers) {
       try {
-        const bytes = CryptoJS.AES.decrypt(encryptedUsers, SECRET_KEY);
-        users = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        users = JSON.parse(encryptedUsers).map((u: User) => ({
+          email: u.email,
+          password: CryptoJS.AES.decrypt(u.password, SECRET_KEY).toString(CryptoJS.enc.Utf8),
+        }));
       } catch (e) {
         users = [];
       }
     }
     if (users.find((u: User) => u.email === newUser.email)) return false;
-    users.push(newUser);
-    const encryptedUsersToSave = CryptoJS.AES.encrypt(JSON.stringify(users), SECRET_KEY).toString();
-    localStorage.setItem("users", encryptedUsersToSave);
-    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(newUser), SECRET_KEY).toString();
-    localStorage.setItem("auth_user", encrypted);
+    // Encrypt only the password
+    const encryptedPassword = CryptoJS.AES.encrypt(newUser.password, SECRET_KEY).toString();
+    const userToSave = { email: newUser.email, password: encryptedPassword };
+    const updatedUsers = [...users, userToSave];
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem("auth_user", JSON.stringify(userToSave));
     setUser(newUser);
     return true;
   };
@@ -53,8 +57,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let users: User[] = [];
     if (encryptedUsers) {
       try {
-        const bytes = CryptoJS.AES.decrypt(encryptedUsers, SECRET_KEY);
-        users = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        users = JSON.parse(encryptedUsers).map((u: User) => ({
+          email: u.email,
+          password: CryptoJS.AES.decrypt(u.password, SECRET_KEY).toString(CryptoJS.enc.Utf8),
+        }));
       } catch (e) {
         users = [];
       }
@@ -63,8 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (u: User) => u.email === loginUser.email && u.password === loginUser.password
     );
     if (found) {
-      const encrypted = CryptoJS.AES.encrypt(JSON.stringify(found), SECRET_KEY).toString();
-      localStorage.setItem("auth_user", encrypted);
+      // Encrypt only the password for storage
+      const encryptedPassword = CryptoJS.AES.encrypt(found.password, SECRET_KEY).toString();
+      const userToSave = { email: found.email, password: encryptedPassword };
+      localStorage.setItem("auth_user", JSON.stringify(userToSave));
       setUser(found);
       return true;
     }

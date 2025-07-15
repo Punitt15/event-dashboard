@@ -1,27 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-
-// Event Type Definition
-export type EventType = {
-  id: string;
-  title: string;
-  description: string;
-  eventType: "Online" | "In-Person";
-  location?: string;
-  eventLink?: string;
-  startDateTime: string;
-  endDateTime: string;
-  category: string;
-  organizer: string;
-};
-
-interface EventContextType {
-  events: EventType[];
-  addEvent: (event: Omit<EventType, "id">) => boolean;
-  updateEvent: (event: EventType) => boolean;
-  deleteEvent: (id: string) => void;
-}
+import { EventType, EventContextType } from "@/types/event";
 
 const EventContext = createContext<EventContextType | null>(null);
 

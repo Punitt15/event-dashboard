@@ -122,7 +122,7 @@ const EventForm = () => {
                   ))}
                 </Field>
               </div>
-              <button type="submit" className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold py-2 rounded-lg transition-all duration-150 shadow w-full">
+              <button type="submit" className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold py-2 rounded-lg transition-all duration-150 shadow w-full cursor-pointer">
                 Create Event
               </button>
             </Form>

@@ -1,11 +1,12 @@
 "use client";
 import { useEvents } from "@/contexts/EventContext";
+import { EventType } from "@/types/event";
 import { useAuth } from "@/contexts/AuthContext";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { EventType } from "@/contexts/EventContext";
+// import { EventType } from "@/contexts/EventContext";
 import { categories, eventTypes, sortOptions } from "@/constants/constants";
 
 export default function EditEventForm({ eventId }: { eventId: string }) {
@@ -124,7 +125,7 @@ export default function EditEventForm({ eventId }: { eventId: string }) {
                                     ))}
                                 </Field>
                             </div>
-                            <button type="submit" className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold py-2 rounded-lg transition-all duration-150 shadow w-full">
+                            <button type="submit" className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold py-2 rounded-lg transition-all duration-150 shadow w-full cursor-pointer">
                                 Update Event
                             </button>
                         </Form>

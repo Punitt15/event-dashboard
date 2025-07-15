@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventList from "@/components/EventList";
 import FilterBar from "@/components/FilterBar";
-import { EventType, useEvents } from "@/contexts/EventContext";
+import { useEvents } from "@/contexts/EventContext";
+import { EventType } from "@/types/event";
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();

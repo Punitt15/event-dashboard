@@ -19,7 +19,7 @@ export default function Navigation() {
             <Link href="/create-event" className="px-3 py-1 rounded-lg text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300 transition">Create Event</Link>
             <button
               onClick={logout}
-              className="px-3 py-1 rounded-lg bg-red-100 text-red-600 font-medium hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-300 transition"
+              className="px-3 py-1 rounded-lg bg-red-100 text-red-600 font-medium hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-300 transition cursor-pointer"
             >
               Logout
             </button>

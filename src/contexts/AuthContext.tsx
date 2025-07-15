@@ -1,19 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import CryptoJS from "crypto-js";
-
-type User = {
-  email: string;
-  password: string;
-};
-
-interface AuthContextType {
-  user: User | null;
-  signup: (user: User) => boolean;
-  login: (user: User) => boolean;
-  logout: () => void;
-  loading: boolean;
-}
+import { User, AuthContextType } from "@/types/auth";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

@@ -73,7 +73,7 @@ const AuthForm = ({ type }: Props) => {
             </div>
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold py-2 rounded-lg transition-all duration-150 shadow-md disabled:opacity-60 disabled:cursor-not-allowed w-full"
+              className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold py-2 rounded-lg transition-all duration-150 shadow-md disabled:opacity-60 disabled:cursor-not-allowed w-full cursor-pointer"
               disabled={loading}
             >
               {loading ? (

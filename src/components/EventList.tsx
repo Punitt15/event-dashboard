@@ -1,5 +1,6 @@
 "use client";
-import { EventType, useEvents } from "@/contexts/EventContext";
+import { useEvents } from "@/contexts/EventContext";
+import { EventType } from "@/types/event";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 
@@ -41,7 +42,7 @@ const EventList = ({ customEvents }: { customEvents: EventType[] }) => {
                       deleteEvent(event.id);
                     }
                   }}
-                  className="px-4 py-1 rounded-lg bg-red-100 text-red-600 font-medium hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-300 transition"
+                  className="px-4 py-1 rounded-lg bg-red-100 text-red-600 font-medium hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-300 transition cursor-pointer"
                 >
                   Delete
                 </button>

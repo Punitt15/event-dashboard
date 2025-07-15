@@ -1,5 +1,6 @@
 "use client";
-import { EventType, useEvents } from "@/contexts/EventContext";
+import { useEvents } from "@/contexts/EventContext";
+import { EventType } from "@/types/event";
 import { useState } from "react";
 import { categories, eventTypes, sortOptions } from "@/constants/constants";
 
@@ -69,7 +70,7 @@ export default function FilterBar({ onFilter }: { onFilter: (filtered: EventType
 
       <button
         onClick={handleFilter}
-        className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-150 shadow w-full sm:w-auto"
+        className="bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-150 shadow w-full sm:w-auto cursor-pointer"
       >
         Apply Filters
       </button>

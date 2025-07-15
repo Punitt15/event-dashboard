@@ -40,7 +40,7 @@ const AuthForm = ({ type }: Props) => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-57px)] flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-2">
+    <div className="min-h-[94vh] flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-2">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-10">
         <h1 className="text-3xl font-bold mb-6 capitalize text-center text-blue-700 drop-shadow-sm">
           {type === "login" ? "Login" : "Sign Up"}

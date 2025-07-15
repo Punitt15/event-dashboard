@@ -11,9 +11,14 @@ export type EventType = {
   organizer: string;
 };
 
+export interface AddOrUpdateEventResult {
+  success: boolean;
+  overlappingEvent?: EventType;
+}
+
 export interface EventContextType {
   events: EventType[];
-  addEvent: (event: Omit<EventType, "id">) => boolean;
-  updateEvent: (event: EventType) => boolean;
+  addEvent: (event: Omit<EventType, "id">) => AddOrUpdateEventResult;
+  updateEvent: (event: EventType) => AddOrUpdateEventResult;
   deleteEvent: (id: string) => void;
 } 

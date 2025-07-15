@@ -60,17 +60,21 @@ const EventForm = () => {
   });
 
   const handleSubmit = (values: typeof initialValues) => {
-    const success = addEvent({
+    const result = addEvent({
       ...values,
       eventType: values.eventType as "Online" | "In-Person",
       organizer: user?.email || "",
     });
 
-    if (success) {
+    if (result.success) {
       alert("Event created successfully!");
       router.push("/dashboard");
     } else {
-      alert("Event time overlaps with another event.");
+      alert(
+        result.overlappingEvent
+          ? `Event time overlaps with another event: ${result.overlappingEvent.title}`
+          : "Event time overlaps with another event."
+      );
     }
   };
 

@@ -62,13 +62,17 @@ export default function EditEventForm({ eventId }: { eventId: string }) {
     });
 
     const handleSubmit = (values: typeof eventData) => {
-        const success = updateEvent({ ...values, id: eventId, organizer: user?.email || "" });
+        const result = updateEvent({ ...values, id: eventId, organizer: user?.email || "" });
 
-        if (success) {
+        if (result.success) {
             alert("Event updated successfully!");
             router.push("/dashboard");
         } else {
-            alert("Event time overlaps with another event.");
+            alert(
+                result.overlappingEvent
+                    ? `Event time overlaps with another event: ${result.overlappingEvent.title}`
+                    : "Event time overlaps with another event."
+            );
         }
     };
 

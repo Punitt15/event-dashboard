@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { EventType, EventContextType } from "@/types/event";
+import { EventType, EventContextType, AddOrUpdateEventResult } from "@/types/event";
 
 const EventContext = createContext<EventContextType | null>(null);
 
@@ -19,23 +19,20 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("events", JSON.stringify(events));
   }, [events]);
 
-  const addEvent = (event: Omit<EventType, "id">) => {
+  const addEvent = (event: Omit<EventType, "id">): AddOrUpdateEventResult => {
     const newEvent = { ...event, id: uuidv4() };
-
-    // Overlap Check
-    if (events.some((e) => isOverlap(e, newEvent))) return false;
-
+    const overlap = events.find((e) => isOverlap(e, newEvent));
+    if (overlap) return { success: false, overlappingEvent: overlap };
     setEvents([...events, newEvent]);
-    return true;
+    return { success: true };
   };
 
-  const updateEvent = (updatedEvent: EventType) => {
+  const updateEvent = (updatedEvent: EventType): AddOrUpdateEventResult => {
     const withoutCurrent = events.filter(e => e.id !== updatedEvent.id);
-
-    if (withoutCurrent.some(e => isOverlap(e, updatedEvent))) return false;
-
+    const overlap = withoutCurrent.find(e => isOverlap(e, updatedEvent));
+    if (overlap) return { success: false, overlappingEvent: overlap };
     setEvents(withoutCurrent.concat(updatedEvent));
-    return true;
+    return { success: true };
   };
 
   const deleteEvent = (id: string) => {

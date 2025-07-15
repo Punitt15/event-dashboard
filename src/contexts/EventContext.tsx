@@ -21,17 +21,20 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addEvent = (event: Omit<EventType, "id">): AddOrUpdateEventResult => {
     const newEvent = { ...event, id: uuidv4() };
-    const overlap = events.find((e) => isOverlap(e, newEvent));
+    // Only check for overlap with events of the same organizer
+    const userEvents = events.filter(e => e.organizer === newEvent.organizer);
+    const overlap = userEvents.find((e) => isOverlap(e, newEvent));
     if (overlap) return { success: false, overlappingEvent: overlap };
     setEvents([...events, newEvent]);
     return { success: true };
   };
 
   const updateEvent = (updatedEvent: EventType): AddOrUpdateEventResult => {
-    const withoutCurrent = events.filter(e => e.id !== updatedEvent.id);
-    const overlap = withoutCurrent.find(e => isOverlap(e, updatedEvent));
+    // Only check for overlap with events of the same organizer
+    const userEvents = events.filter(e => e.organizer === updatedEvent.organizer && e.id !== updatedEvent.id);
+    const overlap = userEvents.find(e => isOverlap(e, updatedEvent));
     if (overlap) return { success: false, overlappingEvent: overlap };
-    setEvents(withoutCurrent.concat(updatedEvent));
+    setEvents(events.map(e => (e.id === updatedEvent.id ? updatedEvent : e)));
     return { success: true };
   };
 

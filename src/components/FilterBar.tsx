@@ -1,6 +1,7 @@
 "use client";
 import { EventType, useEvents } from "@/contexts/EventContext";
 import { useState } from "react";
+import { categories, eventTypes, sortOptions } from "@/constants/constants";
 
 export default function FilterBar({ onFilter }: { onFilter: (filtered: EventType[]) => void }) {
   const { events } = useEvents();
@@ -48,21 +49,23 @@ export default function FilterBar({ onFilter }: { onFilter: (filtered: EventType
 
       <select value={eventType} onChange={(e) => setEventType(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-100 transition w-full sm:w-auto">
         <option value="">All Types</option>
-        <option value="Online">Online</option>
-        <option value="In-Person">In-Person</option>
+        {eventTypes.map((type: string) => (
+          <option key={type} value={type}>{type}</option>
+        ))}
       </select>
 
       <select value={category} onChange={(e) => setCategory(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-100 transition w-full sm:w-auto">
         <option value="">All Categories</option>
-        <option value="Conference">Conference</option>
-        <option value="Meetup">Meetup</option>
-        <option value="Workshop">Workshop</option>
-        <option value="Webinar">Webinar</option>
+        {categories.map((cat: string) => (
+          <option key={cat} value={cat}>{cat}</option>
+        ))}
       </select>
 
       <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-100 transition w-full sm:w-auto">
         <option value="startDate">Sort by Start Date</option>
-        <option value="title">Sort by Title</option>
+        {sortOptions.map((option: { value: string; label: string }) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
       </select>
 
       <button

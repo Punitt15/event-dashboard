@@ -4,8 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
-
-const categories = ["Conference", "Meetup", "Workshop", "Webinar"];
+import { categories, eventTypes, sortOptions } from "@/constants/constants";
 
 const EventForm = () => {
   const { addEvent } = useEvents();
@@ -118,7 +117,7 @@ const EventForm = () => {
               </div>
               <div>
                 <Field as="select" name="category" className="border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-100 transition">
-                  {categories.map((cat) => (
+                  {categories.map((cat: string) => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </Field>

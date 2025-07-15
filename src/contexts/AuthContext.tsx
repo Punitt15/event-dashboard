@@ -28,6 +28,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false);
   }, []);
 
+  const isEncrypted = (str: string) => str.startsWith("U2Fsd");
+
   const signup = (newUser: User) => {
     const encryptedUsers = localStorage.getItem("users");
     let users: User[] = [];
@@ -35,19 +37,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         users = JSON.parse(encryptedUsers).map((u: User) => ({
           email: u.email,
-          password: CryptoJS.AES.decrypt(u.password, SECRET_KEY).toString(CryptoJS.enc.Utf8),
+          password: isEncrypted(u.password)
+            ? CryptoJS.AES.decrypt(u.password, SECRET_KEY).toString(CryptoJS.enc.Utf8)
+            : u.password,
         }));
       } catch (e) {
         users = [];
       }
     }
     if (users.find((u: User) => u.email === newUser.email)) return false;
-    // Encrypt only the password
-    const encryptedPassword = CryptoJS.AES.encrypt(newUser.password, SECRET_KEY).toString();
-    const userToSave = { email: newUser.email, password: encryptedPassword };
-    const updatedUsers = [...users, userToSave];
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    localStorage.setItem("auth_user", JSON.stringify(userToSave));
+    // Add new user (password in plain text for now)
+    const updatedUsers = [...users, newUser];
+    // Encrypt all passwords before saving
+    const usersToSave = updatedUsers.map(u => ({
+      email: u.email,
+      password: CryptoJS.AES.encrypt(u.password, SECRET_KEY).toString(),
+    }));
+    localStorage.setItem("users", JSON.stringify(usersToSave));
+    localStorage.setItem("auth_user", JSON.stringify({
+      email: newUser.email,
+      password: CryptoJS.AES.encrypt(newUser.password, SECRET_KEY).toString(),
+    }));
     setUser(newUser);
     return true;
   };

@@ -11,6 +11,7 @@ interface AuthContextType {
   signup: (user: User) => boolean;
   login: (user: User) => boolean;
   logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -19,10 +20,12 @@ export const useAuth = () => useContext(AuthContext)!;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("auth_user");
     if (savedUser) setUser(JSON.parse(savedUser));
+    setLoading(false);
   }, []);
 
   const signup = (newUser: User) => {
@@ -54,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, signup, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

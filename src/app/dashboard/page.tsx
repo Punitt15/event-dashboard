@@ -7,20 +7,21 @@ import FilterBar from "@/components/FilterBar";
 import { EventType, useEvents } from "@/contexts/EventContext";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const { events } = useEvents();
   const [filteredEvents, setFilteredEvents] = useState<EventType[]>([]);
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push("/login");
     }
-  }, [user]);
+  }, [user, loading]);
 
   useEffect(() => {
     setFilteredEvents(events);
   }, [events]);
 
+  if (loading) return null;
   if (!user) return null;
 
   return (
